@@ -1,0 +1,204 @@
+<script>
+let usuariosCadastrados = []
+let receitasCadastradas = []
+let ingredientesCadastrados = []
+let resultadoPesquisa
+
+class Usuario {
+  constructor(nome) {
+    if(!nome) {
+      throw new Error('Nao eh possivel cadastrar um usuario sem nome.')
+    }
+    this.nome = nome
+  }
+}
+
+class Ingrediente {
+  constructor(nome, variacao, quantidade) {
+    const ingredienteId = ingredientesCadastrados.length + 1
+    this.id = ingredienteId
+    this.nome = nome
+    this.variacao = variacao
+    this.quantidade = quantidade
+  }
+}
+
+class Receita {
+  constructor(titulo, autor, dataDeCriacao, descricao, ingredientes) {
+    const receitaId = receitasCadastradas.length + 1
+    this.id = receitaId
+    this.titulo = titulo
+    this.autor = autor
+    this.dataDeCriacao = dataDeCriacao
+    this.descricao = descricao
+    this.ingredientes = ingredientes
+  }
+}
+
+function listaEntidades() {
+  const pesquisaElement = document.getElementById('pesquisa-resultado')
+  if(resultadoPesquisa) {
+    pesquisaElement.innerHTML = `<li>
+      <strong>${resultadoPesquisa.titulo}</strong>
+      <br />
+      <small>${resultadoPesquisa.autor} - ${resultadoPesquisa.dataDeCriacao.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', }) }</small>
+      <p>${resultadoPesquisa.descricao}</p>
+      <strong>Ingredientes:</strong>
+      <ul>
+        ${resultadoPesquisa.ingredientes.map((ingrediente) => `<li>(${ingrediente.id}) ${ingrediente.quantidade} ${ingrediente.nome} ${ingrediente.variacao}</li>`)}
+      </ul>
+      <br />
+    </li>
+    `
+  }
+
+  const listaUsuariosElement = document.getElementById('lista-usuario')
+  listaUsuariosElement.innerHTML = usuariosCadastrados.map((usuario) => `<li>${usuario.nome}</li>`).join('')
+
+  const listaIngredientesElement = document.getElementById('lista-ingrediente')
+  listaIngredientesElement.innerHTML = ingredientesCadastrados.map((ingrediente) => 
+    `<li>(${ingrediente.id}) ${ingrediente.quantidade} ${ingrediente.nome} ${ingrediente.variacao}</li>`).join('')
+
+  const listaReceitasElement = document.getElementById('lista-receitas')
+  listaReceitasElement.innerHTML = receitasCadastradas.map((receita) => 
+    `<li>
+<strong>${receita.titulo}</strong>
+<br />
+<small>${receita.autor} - ${receita.dataDeCriacao.toLocaleDateString('pt-BR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', }) }</small>
+<p>${receita.descricao}</p>
+<strong>Ingredientes:</strong>
+<ul>
+${receita.ingredientes.map((ingrediente) => `<li>(${ingrediente.id}) ${ingrediente.quantidade} ${ingrediente.nome} ${ingrediente.variacao}</li>`)}
+</ul>
+<br />
+<button type="button" onclick="deletaReceita(${receita.id})">Deletar receita</button>
+<hr />
+<br />
+</li>
+`).join('')
+}
+
+function deletaReceita(receitaId) {
+  const listaSemReceitaDeletada = receitasCadastradas.filter((receita) => receita.id !== receitaId)
+  receitasCadastradas = listaSemReceitaDeletada
+  listaEntidades()
+}
+
+function cadastraEntidade(idFormulario) {
+  if(idFormulario === 'form-ingrediente') {
+    let nomeIngrediente = document.getElementById('nome-ingrediente')
+    let variacaoIngrediente = document.getElementById('variacao-ingrediente')
+    let quantidadeIngrediente = document.getElementById('quantidade-ingrediente')
+
+    const ingrediente = new Ingrediente(nomeIngrediente.value, variacaoIngrediente.value, quantidadeIngrediente.value)
+    ingredientesCadastrados.push(ingrediente)
+
+    nomeIngrediente.value = ''
+    variacaoIngrediente.value = ''
+    quantidadeIngrediente.value = ''
+  }
+
+  if(idFormulario === 'form-receita') {
+    const nomeUsuario = document.getElementById('nome-usuario').value
+    const nomeReceita = document.getElementById('nome-receita').value
+    const descricaoReceita = document.getElementById('descricao-receita').value
+    const ingredientesReceitaIds = document.getElementById('ingredientes-receita').value
+
+    const usuarioJaExiste = usuariosCadastrados.find((usuario) => usuario.nome === nomeUsuario)
+    if(!usuarioJaExiste) {
+      throw new Error('Nao eh possivel cadastrar uma receita se o autor nao estiver cadastrado.')
+    }
+
+    const ingredientesIds = ingredientesReceitaIds.split(',').map((ingrediente) => ingrediente.trim())
+    const ingredientesInstancias = ingredientesIds.map((id) => {
+      const ingredienteExiste = ingredientesCadastrados.find((ingrediente) => ingrediente.id == id)
+      if(!ingredienteExiste) {
+        throw new Error('Nao eh possivel cadastrar uma receita se ingrediente nao estiver cadastrado.')
+      }
+      return ingredienteExiste
+    })
+
+    const receita = new Receita(nomeReceita, nomeUsuario, new Date(), descricaoReceita, ingredientesInstancias)
+    receitasCadastradas.push(receita)
+  }
+
+  if(idFormulario === 'form-usuario') {
+    const nomeUsuario = document.getElementById('nome-usuario').value
+    const usuarioCriado = new Usuario(nomeUsuario)
+    const usuarioJaExiste = usuariosCadastrados.find((usuario) => usuario.nome === nomeUsuario)
+    if(usuarioJaExiste) {
+      throw new Error('Nao eh possivel cadastrar o mesmo usuario novamente.')
+    }
+    usuariosCadastrados.push(usuarioCriado)
+  }
+
+   listaEntidades()
+}
+
+function pesquisaReceita() {
+  const nomeReceita = document.getElementById('pesquisa-receita').value
+  const receita = receitasCadastradas.find((receita) => receita.titulo === nomeReceita)
+  if (!receita) {
+    alert('Receita nao encontrada.')
+  }
+  resultadoPesquisa = receita
+  listaEntidades()
+}
+
+</script>
+
+<h1>Receitas</h1>
+
+<h2>Pesquisa</h2>
+<form id="form-pesquisa" onsubmit="event.preventDefault(); pesquisaReceita();">
+  <label for="pesquisa-receita">Nome da receita</label>
+  <input type="text" name="pesquisa-receita" id="pesquisa-receita" />
+  <button type="submit" id="pesquisar">Pesquisar</button>
+
+  <ul id="pesquisa-resultado"></ul>
+</form>
+<hr />
+
+<form id="form-usuario" onsubmit="event.preventDefault(); cadastraEntidade('form-usuario');">
+  <h2>Cadastro de usuario</h2>
+  <label for="nome-usuario">Nome</label>
+  <input type="text" name="nome-usuario" id="nome-usuario" />
+  <button type="submit" id="cadastra-usuario">Cadastrar</button>
+</form>
+
+<form id="form-ingrediente" onsubmit="event.preventDefault(); cadastraEntidade('form-ingrediente');">
+  <h2>Cadastro de ingredientes</h2>
+  <label for="nome-ingrediente">Nome</label>
+  <input type="text" name="nome-ingrediente" id="nome-ingrediente" />
+  <label for="variacao-ingrediente">Variacao</label>
+  <input type="text" name="variacao-ingrediente" id="variacao-ingrediente" />
+  <label for="quantidade-ingrediente">Quantidade</label>
+  <input type="text" name="quantidade-ingrediente" id="quantidade-ingrediente" />
+  <button type="submit" id="cadastra-ingrediente">Cadastrar</button>
+</form>
+
+<form id="form-receita" onsubmit="event.preventDefault(); cadastraEntidade('form-receita');">
+  <h2>Cadastro de receita</h2>
+  <label for="nome-receita">Nome</label>
+  <input type="text" name="nome-receita" id="nome-receita" />
+  <label for="descricao-receita">Descricao</label>
+  <input type="text" name="descricao-receita" id="descricao-receita" />
+  <label for="ingredientes-receita">Ingredientes (Ids)</label>
+  <input type="text" name="ingredientes-receita" id="ingredientes-receita" placeholder="Informe os Ids dos Ingredientes" />
+  <button type="submit" id="cadastra-receita">Cadastrar</button>
+</form>
+
+<hr />
+
+<h1>Usuarios Cadastrados</h1>
+
+<ul id="lista-usuario"></ul>
+
+<h1>Ingredientes Cadastrados</h1>
+
+<ul id="lista-ingrediente"></ul>
+
+<h1>Receitas Cadastradas</h1>
+
+<ul id="lista-receitas">
+</ul>
