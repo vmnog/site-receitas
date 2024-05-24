@@ -2,6 +2,9 @@
 
 Bem-vindo ao repositório do Projeto Site de Receitas, uma aplicação web simples, mas poderosa, desenvolvida com o objetivo de demonstrar a aplicação prática de JavaScript puro e HTML na criação de um site funcional para gestão de receitas culinárias.
 
+- Vídeoaula: [https://youtu.be/1BWp4BkPUHI](https://youtu.be/1BWp4BkPUHI)
+- Confira o Demo Website: [https://vmnog.github.io/site-receitas/](https://vmnog.github.io/site-receitas/)
+
 ## Sobre o Projeto
 
 Este projeto foi desenvolvido para oferecer uma experiência interativa na gestão de receitas, permitindo aos usuários realizar as seguintes funcionalidades:
