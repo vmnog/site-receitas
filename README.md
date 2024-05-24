@@ -5,7 +5,7 @@ Bem-vindo ao repositório do Projeto Site de Receitas, uma aplicação web simpl
 - Vídeoaula: [https://youtu.be/1BWp4BkPUHI](https://youtu.be/1BWp4BkPUHI)
 - Confira o Demo Website: [https://vmnog.github.io/site-receitas/](https://vmnog.github.io/site-receitas/)
 
-## Sobre o Projeto
+## Descrição do Projeto
 
 Este projeto foi desenvolvido para oferecer uma experiência interativa na gestão de receitas, permitindo aos usuários realizar as seguintes funcionalidades:
 
@@ -41,11 +41,3 @@ Agora, abra o arquivo `index.html` em seu navegador para começar a usar o aplic
 ## Contribuições
 
 Contribuições são sempre bem-vindas! Se você tem alguma sugestão para melhorar este projeto, sinta-se à vontade para criar uma issue ou enviar um pull request.
-
-## Licença
-
-Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
----
-
-Esperamos que você aproveite a utilização do nosso Projeto Site de Receitas, e estamos ansiosos para ver as incríveis funcionalidades que você pode adicionar a ele!
